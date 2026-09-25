@@ -50,7 +50,7 @@ resource "time_sleep" "wait_for_gcs_sa" {
 resource "google_kms_crypto_key_iam_member" "gcs_cmek" {
   crypto_key_id = data.google_kms_crypto_key.project_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member        = "serviceAccount:service-${data.google_project.service_project4.number}@gs-project-accounts.iam.gserviceaccount.com"
+  member        = "serviceAccount:service-${data.google_project.current.number}@gs-project-accounts.iam.gserviceaccount.com"
 
   depends_on = [time_sleep.wait_for_gcs_sa]
 
@@ -139,6 +139,6 @@ dynamic "encryption" {
   ]
 }
 
-data "google_project" "service_project4" {
-  project_id = var.project_id
-}
+# data "google_project" "service_project4" {
+#   project_id = var.project_id
+# }
