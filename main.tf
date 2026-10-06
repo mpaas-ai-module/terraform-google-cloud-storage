@@ -15,16 +15,16 @@ data "google_project" "current" {
   project_id = var.project_id
 }
 
-data "google_kms_key_ring" "project_keyring" {
-  project  = var.project_id
-  name     = var.project_id
-  location = var.location
-}
+# data "google_kms_key_ring" "project_keyring" {
+#   project  = var.project_id
+#   name     = var.project_id
+#   location = var.location
+# }
 
-data "google_kms_crypto_key" "project_key" {
-  name     = "${data.google_project.current.name}-key"
-  key_ring = data.google_kms_key_ring.project_keyring.id
-}
+# data "google_kms_crypto_key" "project_key" {
+#   name     = "${data.google_project.current.name}-key"
+#   key_ring = data.google_kms_key_ring.project_keyring.id
+# }
 ### kms key auto fetching BLOCK newly added
 
 resource "google_project_service" "storage" {
@@ -48,7 +48,8 @@ resource "time_sleep" "wait_for_gcs_sa" {
 }
 
 resource "google_kms_crypto_key_iam_member" "gcs_cmek" {
-  crypto_key_id = data.google_kms_crypto_key.project_key.id
+  # crypto_key_id = data.google_kms_crypto_key.project_key.id
+  crypto_key_id = var.kms_key_name
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:service-${data.google_project.current.number}@gs-project-accounts.iam.gserviceaccount.com"
 
@@ -130,7 +131,8 @@ dynamic "encryption" {
   for_each = [1]
 
   content {
-    default_kms_key_name = data.google_kms_crypto_key.project_key.id
+    # default_kms_key_name = data.google_kms_crypto_key.project_key.id
+    default_kms_key_name = var.kms_key_name
   }
 }
 

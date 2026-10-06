@@ -83,3 +83,8 @@ variable "log_object_prefix" {
   type        = string
   default     = null
 }
+
+variable "kms_key_name" {
+  description = "Name of the KMS key to be used for encryption."
+  type        = string
+}
